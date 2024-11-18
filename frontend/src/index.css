@@ -19,7 +19,6 @@
 @layer base {
   * {
     font-family: "Sour Gummy", sans-serif;
-    scroll-behavior: smooth;
   }
   body {
     @apply dark bg-background text-foreground antialiased;
