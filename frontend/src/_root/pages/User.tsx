@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddTodoForm from "../../components/AddTodoForm";
+import { useUserContext } from "../../context/User";
+import { Navigate } from "react-router-dom";
 
 const lists = [
   "Sample1asdasdsads asdasd asd asdasdsa asd asd asdasdsa asdasdsadasdsadasdasdas asdasdadasdasdsadasd",
@@ -13,7 +15,17 @@ const lists = [
 ];
 
 export default function User() {
+  const { isAuthenticated, checkUserAuth } = useUserContext();
+
   const [isEditing, setIsEditing] = useState("");
+
+  useEffect(() => {
+    checkUserAuth();
+  }, []);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/welcome" />;
+  }
 
   return (
     <section className="flex-grow grid md:grid-cols-3 max-md:grid-rows-3 overflow-hidden">
