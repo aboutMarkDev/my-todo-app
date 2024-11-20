@@ -23,11 +23,11 @@ export default function AddTodoForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="h-full flex items-center gap-8 flex-col md:py-10"
+      className="flex flex-col items-center gap-8 max-md:gap-3 md:py-10 max-md:w-full max-md:max-w-[18rem] mx-auto p-3"
     >
       <div className="text-center w-full">
         <h1 className="text-lg font-medium">Add todo here...</h1>
-        <p className="italic text-sm text-secondary">
+        <p className="italic text-sm text-secondary line-clamp-1 text-center">
           Lorem ipsum dolor sit amet consectetur adipisicing elit.{" "}
         </p>
       </div>

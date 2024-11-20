@@ -21,7 +21,7 @@
     font-family: "Sour Gummy", sans-serif;
   }
   body {
-    @apply dark bg-background text-foreground antialiased;
+    @apply dark bg-background text-foreground antialiased custom-scrollbar;
   }
 }
 
@@ -35,4 +35,8 @@
   .flex-jbetween {
     @apply flex justify-between;
   }
+}
+
+.custom-scrollbar {
+  @apply [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-secondary;
 }

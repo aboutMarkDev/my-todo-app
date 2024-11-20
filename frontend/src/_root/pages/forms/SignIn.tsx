@@ -49,7 +49,7 @@ export default function SignIn() {
     }
   }
   return (
-    <section className="flex-grow">
+    <section className="flex-grow py-5">
       <form
         action=""
         className="w-full h-full max-w-2xl mx-auto flex items-center justify-center gap-8 flex-col"

@@ -29,8 +29,8 @@ export default function User() {
 
   return (
     <section className="flex-grow grid md:grid-cols-3 max-md:grid-rows-3 overflow-hidden">
-      <article className="md:border-r max-md:border-t border-secondary md:col-span-2 max-md:order-last max-md:row-span-2 overflow-auto [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:bg-secondary">
-        <ul className="px-3 py-5 space-y-5">
+      <article className="md:border-r max-md:border-t border-secondary md:col-span-2 max-md:order-last max-md:row-span-2 overflow-auto custom-scrollbar">
+        <ul className="p-3 space-y-3 overflow-hidden">
           {lists.map((list, i) => {
             return (
               <li key={i} className="flex items-center justify-between h-8">
@@ -85,7 +85,7 @@ export default function User() {
         </ul>
       </article>
 
-      <article className="px-3 py-5">
+      <article className="overflow-auto custom-scrollbar">
         <AddTodoForm />
       </article>
     </section>

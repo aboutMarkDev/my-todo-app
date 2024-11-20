@@ -1,6 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import { useUserContext } from "../../context/User";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Welcome() {
   const { isAuthenticated, checkUserAuth } = useUserContext();
@@ -14,7 +14,7 @@ export default function Welcome() {
   }
 
   return (
-    <article className="flex-grow flex-col flex-icenter w-full max-w-lg mx-auto text-center gap-3 max-md:px-3">
+    <article className="flex-grow flex-col flex-icenter w-full max-w-lg mx-auto text-center gap-3 max-md:px-3 py-5">
       <h1 className="text-5xl font-medium">Welcome!</h1>
       <p className="font-light">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae impedit

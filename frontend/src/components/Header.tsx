@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/User";
 import { useLogout } from "../lib/react-query/queries";
 
@@ -22,7 +22,7 @@ export default function Header() {
   }
 
   return (
-    <header className="border-b border-secondary h-[5rem] px-10 max-md:px-5 flex items-center justify-between">
+    <header className="border-b border-secondary py-5 px-10 max-md:px-5 max-md:py-3 flex items-center justify-between">
       {isAuthenticated && (
         <h3 className="font-light">
           {user.username ? `Hi, ${user.username}!` : "Loading..."}
@@ -34,7 +34,7 @@ export default function Header() {
             Back
           </button>
         )}
-        <h1 className="text-xl font-semibold">(Teudo)ongi App</h1>
+        <Link to='/' className="text-xl font-semibold">(Teudo)ongi App</Link>
       </div>
       {isAuthenticated && (
         <button
