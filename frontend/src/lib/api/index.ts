@@ -34,6 +34,26 @@ export const signIn = async (userData: UserData) => {
   return message;
 };
 
+export const signUp = async (userData: UserData) => {
+  const res = await fetch(`${url}/user/register`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
+
+  const { message } = await res.json();
+
+  if (!res.ok) {
+    throw message;
+  }
+
+  return message;
+};
+
+
 export const logout = async () => {
   const res = await fetch(`${url}/user/logout`, {
     method: "POST",
