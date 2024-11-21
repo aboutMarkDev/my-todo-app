@@ -1,4 +1,7 @@
 import { useForm } from "react-hook-form";
+import { useAddTodo } from "../lib/react-query/queries";
+import { useUserContext } from "../context/User";
+import toast from "react-hot-toast";
 
 type AddTodoFormData = {
   todo: string;
@@ -16,9 +19,20 @@ export default function AddTodoForm() {
     },
   });
 
+  const { user } = useUserContext();
+
+  const { mutateAsync: addTodo, isPending: isAddingTodo } = useAddTodo(user.id);
+
   async function onSubmit(values: AddTodoFormData) {
-    console.log(values);
-    reset();
+    try {
+      const newTodo = await addTodo(values.todo);
+
+      toast.success(newTodo);
+
+      reset();
+    } catch (error) {
+      toast.error(error as string);
+    }
   }
   return (
     <form
@@ -39,14 +53,15 @@ export default function AddTodoForm() {
           })}
         />
         {errors?.todo && (
-          <p className="text-red-400 italic">{errors.todo.message}</p>
+          <p className="text-red-400 text-sm italic">{errors.todo.message}</p>
         )}
       </div>
       <button
         type="submit"
+        disabled={isAddingTodo}
         className="bg-primary w-full rounded-md h-10 max-md:h-8 text-lg"
       >
-        Add
+        {isAddingTodo ? "Loading..." : "Add"}
       </button>
     </form>
   );
