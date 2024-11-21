@@ -47,17 +47,54 @@ export const editTodo = asyncHandler(
     const { todoId } = req.params;
 
     try {
-      const todoToBeUpdate = await Todo.findById(todoId);
+      const todoToUpdate = await Todo.findById(todoId);
 
-      if (!todoToBeUpdate) {
+      if (!todoToUpdate) {
         throw new CustomError("Todo not found", 500);
       }
 
-      todoToBeUpdate.todo = updatedTodo || todoToBeUpdate.todo;
+      todoToUpdate.todo = updatedTodo || todoToUpdate.todo;
 
-      await todoToBeUpdate.save();
+      await todoToUpdate.save();
 
-      res.status(200).json({ message: "Todo updated!" });
+      res.status(200).json({ message: "Successfully updated!" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+export const deleteTodo = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { todoId } = req.params;
+
+    try {
+      const todoToDelete = await Todo.findByIdAndDelete(todoId);
+
+      if (!todoToDelete) {
+        throw new CustomError("Todo not found", 500);
+      }
+
+      res.status(200).json({ message: "Successfully deleted!" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+export const toggleDone = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { todoId } = req.params;
+    const { isDone } = req.body;
+
+    try {
+      const todoToToggle = await Todo.findByIdAndUpdate(todoId, { isDone });
+
+      if (!todoToToggle) {
+        throw new CustomError("Todo not found", 500);
+      }
+
+      res.status(200).json({ success: true });
     } catch (error) {
       next(error);
     }

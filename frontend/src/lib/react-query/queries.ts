@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addTodo,
+  deleteTodo,
   editTodo,
   getTodoByUser,
   logout,
   signIn,
   signUp,
+  toggleDone,
 } from "../api";
 import { UserData } from "../../types";
 import { QUERY_KEYS } from "./queryKeys";
@@ -62,6 +64,33 @@ export const useEditTodo = (userId: string) => {
       updatedTodo: string;
       todoId: string;
     }) => editTodo(updatedTodo, todoId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_TODOS, userId],
+      });
+    },
+  });
+};
+
+export const useDeleteTodo = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (todoId: string) => deleteTodo(todoId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_TODOS, userId],
+      });
+    },
+  });
+};
+
+export const useToggleDone = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ isDone, todoId }: { isDone: boolean; todoId: string }) =>
+      toggleDone(todoId, isDone),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_USER_TODOS, userId],

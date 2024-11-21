@@ -115,3 +115,38 @@ export const editTodo = async (updatedTodo: string, todoId: string) => {
 
   return message;
 };
+
+export const deleteTodo = async (todoId: string) => {
+  const res = await fetch(`${url}/todo/delete/${todoId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const { message } = await res.json();
+
+  if (!res.ok) {
+    throw message;
+  }
+
+  return message;
+};
+
+export const toggleDone = async (todoId: string, isDone: boolean) => {
+  const res = await fetch(`${url}/todo/toggleDone/${todoId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ isDone: !isDone }),
+  });
+
+  const { message } = await res.json();
+
+  if (!res.ok) {
+    throw message;
+  }
+
+  return res;
+};

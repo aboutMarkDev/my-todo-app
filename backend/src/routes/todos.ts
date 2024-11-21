@@ -1,6 +1,12 @@
 import express from "express";
 import { secure } from "../middlewares/userAuth";
-import { addTodo, editTodo, getTodosByUser } from "../controllers/todos";
+import {
+  addTodo,
+  deleteTodo,
+  editTodo,
+  getTodosByUser,
+  toggleDone,
+} from "../controllers/todos";
 
 const router = express.Router();
 
@@ -13,6 +19,8 @@ router.post("/add", secure, addTodo);
 
 router.patch("/edit/:todoId", editTodo);
 
-router.delete("/delete/:todoId");
+router.delete("/delete/:todoId", deleteTodo);
+
+router.patch("/toggleDone/:todoId", toggleDone);
 
 export default router;
