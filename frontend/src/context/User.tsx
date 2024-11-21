@@ -36,10 +36,11 @@ const UserContext = createContext<UserContextType>(initialUserState);
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserType>(initialUser);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const val = localStorage.getItem("isAuth");
-    return val ? JSON.parse(val) : false;
-  });
+  // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+  //   const val = localStorage.getItem("isAuth");
+  //   return val ? JSON.parse(val) : false;
+  // });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   //Async func for fetching current user via token
   const checkUserAuth = async () => {
@@ -71,9 +72,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     checkUserAuth();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("isAuth", JSON.stringify(isAuthenticated));
-  }, [isAuthenticated]);
+  // useEffect(() => {
+  //   localStorage.setItem("isAuth", JSON.stringify(isAuthenticated));
+  // }, [isAuthenticated]);
 
   const value = {
     user,
