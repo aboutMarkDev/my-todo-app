@@ -5,6 +5,8 @@ import { Loader2 } from "lucide-react";
 import { useEditTodo } from "@/lib/react-query/queries";
 import { useUserContext } from "@/context/User";
 import { EditTodoFormProps } from "@/types";
+import { Input } from "./ui/input";
+import InputWarningMessage from "./InputWarningMessage";
 
 export default function EditTodoForm({
   list,
@@ -70,17 +72,13 @@ export default function EditTodoForm({
       onSubmit={(e) => handleSubmit(e, list.todo, list._id)}
     >
       <div className="flex items-center gap-2">
-        <input
+        <Input
           type="text"
           value={updatedTodo}
-          className="rounded-md h-8 px-5 text-[#27374d]"
+          className="px-5"
           onChange={(e) => setUpdatedTodo(e.target.value)}
         />
-        {inputErr && (
-          <p className="text-red-400 text-sm italic">
-            Required more than 2 char.
-          </p>
-        )}
+        {inputErr && <InputWarningMessage errorMessage="Required" />}
       </div>
       <div className="flex gap-2">
         <Button

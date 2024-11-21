@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useUserContext } from "../../../context/User";
 import toast from "react-hot-toast";
 import { useRegister } from "../../../lib/react-query/queries";
+import { Input } from "@/components/ui/input";
+import InputWarningMessage from "@/components/InputWarningMessage";
+import { Eye, EyeClosed, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type SignUpFormData = {
   username: string;
@@ -34,10 +38,14 @@ export default function SignUp() {
 
   const navigate = useNavigate();
 
-  const { checkUserAuth } = useUserContext();
+  const { checkUserAuth, isAuthenticated } = useUserContext();
 
   const [isPassShow, setIsPassShow] = useState(false);
   const [isCpassShow, setIsCpassShow] = useState(false);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   async function onSubmit(values: SignUpFormData) {
     console.log(values);
@@ -63,97 +71,112 @@ export default function SignUp() {
   return (
     <section className="flex-grow py-5">
       <form
-        action=""
         className="w-full h-full max-w-2xl mx-auto flex items-center justify-center gap-5 flex-col"
         onSubmit={handleSubmit(onSubmit)}
       >
         <h1 className="text-2xl font-medium">Sign Up</h1>
 
         {/* Username Field */}
-        <div className="flex flex-col w-full max-w-xs">
+        <div className="flex flex-col w-full gap-1 max-w-xs">
           <label htmlFor="">Username</label>
-          <input
+          <Input
             type="text"
-            className="border rounded-md h-10 px-5 text-black-100"
+            className="px-5"
             {...register("username", {
               required: "Required",
+              minLength: {
+                value: 3,
+                message: "Username must be at least 3 characters long.",
+              },
             })}
           />
           {errors?.username && (
-            <p className="text-red-400 italic text-sm">
-              {errors.username.message}
-            </p>
+            <InputWarningMessage errorMessage={errors.username.message || ""} />
           )}
         </div>
 
         {/* Password Field*/}
         <div className="flex flex-col w-full max-w-xs">
-          <div className="flex justify-between">
+          <div className="flex items-center justify-between">
             <label htmlFor="">Password</label>
-            <button
+            <Button
               type="button"
-              className="cursor-pointer"
+              size="icon"
+              className="rounded-full bg-transparent hover:bg-transparent shadow-none"
               tabIndex={-1}
               onClick={() => setIsPassShow(!isPassShow)}
             >
-              {isPassShow ? "Hide" : "Show"} Password
-            </button>
+              {isPassShow ? <EyeClosed /> : <Eye />}
+            </Button>
           </div>
-          <input
-            type={isPassShow ? "text" : "password"}
-            className="border rounded-md h-10 px-5 text-black-100"
-            {...register("password", {
-              required: "Please enter your password",
-              minLength: {
-                value: 4,
-                message: "Password must be at least 4 characters long",
-              },
-            })}
-          />
-          {errors?.password && (
-            <p className="text-red-400 italic text-sm">
-              {errors.password.message}
-            </p>
-          )}
+          <div className="space-y-1">
+            <Input
+              type={isPassShow ? "text" : "password"}
+              className="px-5"
+              {...register("password", {
+                required: "Please enter your password",
+                minLength: {
+                  value: 4,
+                  message: "Password must be at least 4 characters long",
+                },
+              })}
+            />
+            {errors?.password && (
+              <InputWarningMessage
+                errorMessage={errors.password.message || ""}
+              />
+            )}
+          </div>
         </div>
 
         {/* Confirm Password Field */}
         <div className="flex flex-col w-full max-w-xs">
-          <div className="flex justify-between">
+          <div className="flex items-center justify-between">
             <label htmlFor="">Confirm Password</label>
-            <button
+            <Button
               type="button"
-              className="cursor-pointer"
+              size="icon"
+              className="rounded-full bg-transparent hover:bg-transparent shadow-none"
               tabIndex={-1}
               onClick={() => setIsCpassShow(!isCpassShow)}
             >
-              {isCpassShow ? "Hide" : "Show"} Password
-            </button>
+              {isCpassShow ? <EyeClosed /> : <Eye />}
+            </Button>
           </div>
-          <input
-            type={isCpassShow ? "text" : "password"}
-            className="border rounded-md h-10 px-5 text-black-100"
-            {...register("confirmPassword", {
-              required: "Please enter your password",
-              validate: (value) =>
-                value === password || "Passwords do not match",
-            })}
-          />
-          {errors?.confirmPassword && (
-            <p className="text-red-400 italic text-sm">
-              {errors.confirmPassword.message}
-            </p>
-          )}
+          <div className="space-y-1">
+            <Input
+              type={isCpassShow ? "text" : "password"}
+              className="px-5 "
+              {...register("confirmPassword", {
+                required: "Please enter your password",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              })}
+            />
+            {errors?.confirmPassword && (
+              <InputWarningMessage
+                errorMessage={errors.confirmPassword.message || ""}
+              />
+            )}
+          </div>
         </div>
 
-        <footer className="w-full max-w-xs space-y-2">
-          <button
+        {/* Button */}
+        <footer className="w-full max-w-xs space-y-1">
+          <Button
             type="submit"
             disabled={isSigningUp}
-            className="bg-primary py-2 w-full max-w-xs rounded-md"
+            className="bg-primary hover:bg-primary/40 transition-colors duration-200 w-full"
           >
-            {isSigningUp ? "Loading..." : "Submit"}
-          </button>
+            {isSigningUp ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Submit"
+            )}
+          </Button>
           <p className="text-sm">
             Already have an account?{" "}
             <Link to="/sign-in" className="hover:underline text-blue-400">

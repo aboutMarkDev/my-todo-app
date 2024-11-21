@@ -2,6 +2,10 @@ import { useForm } from "react-hook-form";
 import { useAddTodo } from "../lib/react-query/queries";
 import { useUserContext } from "../context/User";
 import toast from "react-hot-toast";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
+import { Input } from "./ui/input";
+import InputWarningMessage from "./InputWarningMessage";
 
 type AddTodoFormData = {
   todo: string;
@@ -37,7 +41,7 @@ export default function AddTodoForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col items-center gap-8 max-md:gap-3 md:py-10 max-md:w-full max-md:max-w-[18rem] mx-auto p-3"
+      className="flex flex-col items-center gap-8 max-md:gap-2 md:py-10 md:px-5 max-md:w-full max-md:max-w-[18rem] mx-auto py-2"
     >
       <div className="text-center w-full">
         <h1 className="text-lg font-medium">Add todo here...</h1>
@@ -46,23 +50,34 @@ export default function AddTodoForm() {
         </p>
       </div>
       <div className="w-full space-y-1">
-        <input
-          className="w-full h-10 max-md:h-8 rounded-md text-primary px-5"
+        <Input
+          className="px-5"
           {...register("todo", {
             required: "Required",
+            minLength: {
+              value: 3,
+              message: "Todo must be at least 3 characters long.",
+            },
           })}
         />
         {errors?.todo && (
-          <p className="text-red-400 text-sm italic">{errors.todo.message}</p>
+          <InputWarningMessage errorMessage={errors.todo.message || ""} />
         )}
       </div>
-      <button
+      <Button
         type="submit"
         disabled={isAddingTodo}
-        className="bg-primary w-full rounded-md h-10 max-md:h-8 text-lg"
+        className="bg-primary hover:bg-primary/40 transition-colors duration-200 w-full"
       >
-        {isAddingTodo ? "Loading..." : "Add"}
-      </button>
+        {isAddingTodo ? (
+          <>
+            <Loader2 className="animate-spin" />
+            Loading...
+          </>
+        ) : (
+          "Add"
+        )}
+      </Button>
     </form>
   );
 }
