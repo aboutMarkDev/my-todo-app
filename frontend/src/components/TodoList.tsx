@@ -1,18 +1,12 @@
-import { useEditTodo, useGetTodosByUser } from "@/lib/react-query/queries";
+import { useDeleteTodo, useGetTodosByUser } from "@/lib/react-query/queries";
 import TodoListSkeleton from "./TodoListSkeleton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useUserContext } from "@/context/User";
 import EmptyTodo from "./EmptyTodo";
 import toast from "react-hot-toast";
-
-// DONE WITH EDITING TODO, NEXT UPDATING THE ISDONE AND ITS UI WHICH IS LINE-THROUGH AND THE DELETE TODO. JUST CREATE A NEW ROUTES FOR THESE TWO.
-
-interface ITodos {
-  _id: string;
-  userId: string;
-  todo: string;
-  isDone: boolean;
-}
+import EditTodoForm from "./EditTodoForm";
+import { IDataTodo } from "@/types";
+import DataList from "./DataList";
 
 export default function TodoList() {
   const { user } = useUserContext();
@@ -20,52 +14,24 @@ export default function TodoList() {
   const { data: todosByUser, isPending: isTodosLoading } = useGetTodosByUser(
     user.id
   );
+  const { mutateAsync: deleteTodo, isPending: isDeletingLoading } =
+    useDeleteTodo(user.id);
 
-  const { mutateAsync: editTodo, isPending: isEditingLoading } = useEditTodo(
-    user.id
-  );
+  // This will indicate which todo is on editing, deleting, and toggling.
+  // This will store todoId of todo to perform some basic indication.
+  // (e.g., If I click the edit button, it will set the Id of that todo to transform it into form for submitting the updated todo)
+  const [todoToEdit, setTodoToEdit] = useState<string>("");
+  const [todoToDelete, setTodoToDelete] = useState<string>("");
+  const [todoToToggle, setTodoToToggle] = useState<string>("");
 
-  const [isEditing, setIsEditing] = useState(""); //STATE FOR INDICATING WHICH TODOLIST IS EDITING OR IN A INPUT ELEMENT FORM
+  const [updatedTodo, setUpdatedTodo] = useState<string>("");
 
-  const [updatedTodo, setUpdatedTodo] = useState("");
-
-  const [inputErr, setInputErr] = useState(false); //STATE FOR INPUT ERROR
-
-  useEffect(() => {
-    if (updatedTodo.length <= 2) {
-      setInputErr(true);
-    } else {
-      setInputErr(false);
-    }
-  }, [updatedTodo]);
-
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
-    beforeTodo: string,
-    todoId: string
-  ) => {
-    e.preventDefault();
-
+  // For deleting todo
+  const handleDelete = async (todoId: string) => {
     try {
-      // First validation: If input error is true, user can't call api. And if he wanted to just go back click again.
-      if (inputErr) {
-        return setIsEditing("");
-      }
+      const todoToDelete = await deleteTodo(todoId);
 
-      // Second validation: If input value doesn't change just set the isediting state to empty string or reset the state.
-      //   if beforeTodo is equal to updatedTodo it means that the user didn't change the value of input
-      if (beforeTodo === updatedTodo) {
-        return setIsEditing("");
-      }
-
-      const myUpdatedTodo = await editTodo({
-        updatedTodo,
-        todoId,
-      });
-
-      toast.success(myUpdatedTodo);
-
-      setIsEditing("");
+      toast.success(todoToDelete);
     } catch (error) {
       toast.error(error as string);
     }
@@ -75,70 +41,36 @@ export default function TodoList() {
     <TodoListSkeleton />
   ) : todosByUser.length > 0 ? (
     <ul className="p-3 space-y-3 overflow-hidden">
-      {todosByUser?.map((list: ITodos) => {
-        const currentlyEditing = isEditing === list._id;
+      {todosByUser?.map((list: IDataTodo) => {
+        const currentlyEditing = todoToEdit === list._id;
+        const currentlyToDelete = todoToDelete === list._id;
+        const currentlyToToggle = todoToToggle === list._id;
+
         return (
           <li key={list._id}>
             {currentlyEditing ? (
-              <form
-                className="flex items-center justify-between h-8"
-                onSubmit={(e) => handleSubmit(e, list.todo, list._id)}
-              >
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={updatedTodo}
-                    className="rounded-md h-8 px-5 text-primary"
-                    onChange={(e) => setUpdatedTodo(e.target.value)}
-                  />
-                  {inputErr && (
-                    <p className="text-red-400 text-sm italic">
-                      Required more than 2 char.
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="submit"
-                    disabled={isEditingLoading}
-                    className="rounded-md bg-green-400 px-5 py-1 text-black-100"
-                  >
-                    {isEditingLoading
-                      ? "Loading..."
-                      : inputErr
-                      ? "Back"
-                      : "Save"}
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-md bg-red-400 px-5 py-1 text-black-100"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </form>
+              <EditTodoForm
+                list={list}
+                handleDelete={handleDelete}
+                setTodoToDelete={setTodoToDelete}
+                currentlyToDelete={currentlyToDelete}
+                isDeletingLoading={isDeletingLoading}
+                setTodoToEdit={setTodoToEdit}
+                updatedTodo={updatedTodo}
+                setUpdatedTodo={setUpdatedTodo}
+              />
             ) : (
-              <div className="flex items-center justify-between h-8">
-                <p className="px-1 line-clamp-2">{list.todo}</p>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditing(list._id);
-                      setUpdatedTodo(list.todo);
-                    }}
-                    className="rounded-md bg-blue-400 px-5 py-1 text-black-100"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-md bg-red-400 px-5 py-1 text-black-100"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+              <DataList
+                list={list}
+                setTodoToToggle={setTodoToToggle}
+                currentlyToToggle={currentlyToToggle}
+                setTodoToEdit={setTodoToEdit}
+                setUpdatedTodo={setUpdatedTodo}
+                setTodoToDelete={setTodoToDelete}
+                handleDelete={handleDelete}
+                currentlyToDelete={currentlyToDelete}
+                isDeletingLoading={isDeletingLoading}
+              />
             )}
           </li>
         );
