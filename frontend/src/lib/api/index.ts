@@ -1,6 +1,6 @@
 import { UserData } from "../../types";
 
-const url = import.meta.env.VITE_BACKEND_LOCAL_URL;
+const url = import.meta.env.VITE_BACKEND_DEPLOYED_URL;
 
 // USER API
 export const getCurrentUser = async () => {
