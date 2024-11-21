@@ -1,6 +1,7 @@
 import { Link, Navigate } from "react-router-dom";
 import { useUserContext } from "../../context/User";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Welcome() {
   const { isAuthenticated, checkUserAuth } = useUserContext();
@@ -23,11 +24,15 @@ export default function Welcome() {
         eveniet beatae voluptates.
       </p>
       <div className="flex gap-5">
-        <Link to="/sign-in" className="bg-primary px-3 py-1 rounded-lg text-lg">
-          Sign In
+        <Link to="/sign-in">
+          <Button className="bg-primary hover:bg-primary/40 transition-colors duration-200">
+            Sign In
+          </Button>
         </Link>
-        <Link to="/sign-up" className="bg-primary px-3 py-1 rounded-lg text-lg">
-          Sign Up
+        <Link to="/sign-up">
+          <Button className="bg-primary hover:bg-primary/40 transition-colors duration-200">
+            Sign Up
+          </Button>
         </Link>
       </div>
     </article>

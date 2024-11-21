@@ -1,6 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/User";
 import { useLogout } from "../lib/react-query/queries";
+import { ArrowLeft, Loader2, LogOut } from "lucide-react";
+import { Button } from "./ui/button";
 
 export default function Header() {
   const { isAuthenticated, user, setIsAuthenticated } = useUserContext();
@@ -25,26 +27,47 @@ export default function Header() {
     <header className="border-b border-secondary py-5 px-10 max-md:px-5 max-md:py-3 flex items-center justify-between">
       {isAuthenticated && (
         <h3 className="font-light">
-          {user.username ? `Hi, ${user.username}!` : "Loading..."}
+          {user.username ? (
+            `Hi, ${user.username}!`
+          ) : (
+            <Loader2 className="animate-spin" />
+          )}
         </h3>
       )}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-1">
         {pathname !== "/welcome" && pathname !== "/" && (
-          <button type="button" onClick={() => navigate(-1)}>
-            Back
-          </button>
+          <Button
+            variant="ghost"
+            type="button"
+            className="h-7 w-7 hover:bg-primary hover:text-foreground"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft />
+          </Button>
         )}
-        <Link to='/' className="text-xl font-semibold">(Teudo)ongi App</Link>
+        <Link to="/" className="text-xl font-semibold">
+          (Teudo)ongi App
+        </Link>
       </div>
       {isAuthenticated && (
-        <button
-          className="rounded-lg px-3 py-1 bg-primary text-lg"
+        <Button
+          className="bg-primary hover:bg-primary/40 transition-colors duration-200"
           type="button"
           disabled={isLogoutLoading}
           onClick={userLogout}
         >
-          {isLogoutLoading ? "Loading..." : "Logout"}
-        </button>
+          {isLogoutLoading ? (
+            <>
+              <Loader2 className="animate-spin" />
+              Loading...
+            </>
+          ) : (
+            <>
+              <LogOut />
+              Logout
+            </>
+          )}
+        </Button>
       )}
     </header>
   );
