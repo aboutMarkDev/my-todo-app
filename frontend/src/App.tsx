@@ -12,6 +12,7 @@ import User from "./_root/pages/User";
 import Welcome from "./_root/pages/Welcome";
 import { Toaster } from "react-hot-toast";
 
+// Create router
 export default function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
