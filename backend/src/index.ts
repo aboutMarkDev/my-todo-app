@@ -9,7 +9,7 @@ import { errorMiddleware } from "./middlewares/error";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5001;
 
 connectionDB();
 
